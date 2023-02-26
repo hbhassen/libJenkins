@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.exemple.blabla</groupId>
+        <artifactId>blabla-deploy</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>blabla-deploy</artifactId>
+    <packaging>pom</packaging>
+
+    <description>Builds XLDeploy DAR FZr blabla-</description>
+
+    <properties>
+        <deployit.env>FEC</deployit.env>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.exemple.blabla</groupId>
+            <artifactId>blabla-ear</artifactId>
+            <version>${project.version}</version>
+            <type>ear</type>
+        </dependency>
+        <dependency>
+            <groupId>com.exemple.blabla</groupId>
+            <artifactId>blabla-config</artifactId>
+            <version>${project.version}</version>
+            <classifier>config</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.xebialabs.xldeploy</groupId>
+                    <artifactId>xldeploy-maven-plugin</artifactId>
+                    <configuration>
+                        <applicationName>blabla-deploy</applicationName>
+                        <environmentId>${deployit.environmentId}</environmentId>
+
+                        <deployables>
+                            <deployable>
+                                <name>blabla-.ear</name>
+                                <groupId>com.exemple.blabla</groupId>
+                                <artifactId>blabla-ear</artifactId>
+                                <type>jee.Ear</type>
+                                <scanPlaceholders>false</scanPlaceholders>
+                                <targetPath>{{blabla-.jboss.base}}/deployments</targetPath>
+                                <tags>
+                                    <tag>blabla</tag>
+                                </tags>
+                            </deployable>
+
+                            <deployable>
+                                <name>blabla-config</name>
+                                <type>file.folder</type>
+                                <groupId>com.exemple.blabla</groupId>
+                                <artifactId>blabla-config</artifactId>
+                                <classifier>config</classifier>
+                                <targetPath>
+                                    {{blabla-.jboss.base}}/{{blabla-.jboss.modules}}/com/exemple/appli/configuration/main</targetPath>
+
+                                <scanPlaceholders>true</scanPlaceholders>
+                                <textFileNamesRegex>.+\.(properties|json)</textFileNamesRegex>
+                                <createTargetPath>false</createTargetPath>
+                                <targetPathShared>true</targetPathShared>
+                                <createOrder>61</createOrder>
+                                <noopOrder>61</noopOrder>
+                                <modifyOrder>61</modifyOrder>
+                                <tags>
+                                    <tag>blabla</tag>
+                                </tags>
+                            </deployable>
+
+                            <deployable>
+                                <name>blabla-sql</name>
+                                <type>sql.SqlScripts</type>
+                                <scanPlaceholders>true</scanPlaceholders>
+                                <location>postgreScripts</location>
+                                <tags>
+                                    <tag>blabla-FZ-BDD</tag>
+                                </tags>
+                            </deployable>
+                        </deployables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

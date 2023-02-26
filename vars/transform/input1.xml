@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.exemple.blabla</groupId>
+        <artifactId>blabla-deploy</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>blabla-deploy</artifactId>
+    <packaging>pom</packaging>
+
+    <description>Builds XLDeploy DAR FZr blabla-</description>
+
+    <properties>
+        <deployit.env>FEC</deployit.env>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.exemple.blabla</groupId>
+            <artifactId>blabla-ear</artifactId>
+            <version>${project.version}</version>
+            <type>ear</type>
+        </dependency>
+        <dependency>
+            <groupId>com.exemple.blabla</groupId>
+            <artifactId>blabla-config</artifactId>
+            <version>${project.version}</version>
+            <classifier>config</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.xebialabs.xldeploy</groupId>
+                    <artifactId>xldeploy-maven-plugin</artifactId>
+                    <configuration>
+                        <applicationName>blabla-deploy</applicationName>
+                        <environmentId>${deployit.environmentId}</environmentId>
+
+                        <deployables>
+                            <deployable>
+                                <name>blabla-.ear</name>
+                                <groupId>com.exemple.blabla</groupId>
+                                <artifactId>blabla-ear</artifactId>
+                                <type>jee.Ear</type>
+                                <scanPlaceholders>false</scanPlaceholders>
+                                <targetPath>{{blabla-.jboss.base}}/deployments</targetPath>
+                                <tags>
+                                    <tag>blabla</tag>
+                                </tags>
+                            </deployable>
+
+                            <deployable>
+                                <name>blabla-config</name>
+                                <type>file.folder</type>
+                                <groupId>com.exemple.blabla</groupId>
+                                <artifactId>blabla-config</artifactId>
+                                <classifier>config</classifier>
+                                <targetPath>{{blabla-.jboss.base}}/{{blabla-.jboss.modules}}/com/exemple/appli/configuration/main</targetPath>
+                                
+                                <scanPlaceholders>true</scanPlaceholders>
+                                <textFileNamesRegex>.+\.(properties|json)</textFileNamesRegex>
+                                <createTargetPath>false</createTargetPath>
+                                <targetPathShared>true</targetPathShared>
+                                <createOrder>61</createOrder>
+                                <noopOrder>61</noopOrder>
+                                <modifyOrder>61</modifyOrder>
+                                <tags>
+                                    <tag>blabla</tag>
+                                </tags>
+                            </deployable>
+
+                            <deployable>
+                                <name>blabla-sql</name>
+                                <type>sql.SqlScripts</type>
+                                <scanPlaceholders>true</scanPlaceholders>
+                                <location>postgreScripts</location>
+                                <tags>
+                                    <tag>blabla-FZ-BDD</tag>
+                                </tags>
+                            </deployable>
+                        </deployables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>do-package</id>
+            <activation>
+                <property>
+                    <name>doPackage</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.xebialabs.xldeploy</groupId>
+                        <artifactId>xldeploy-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>xld</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>generate-deployment-package</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>do-import</id>
+            <activation>
+                <property>
+                    <name>doImport</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.xebialabs.xldeploy</groupId>
+                        <artifactId>xldeploy-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>import-intra</id>
+                                <goals>
+                                    <goal>import</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <serverAddress>${deployit.server}</serverAddress>
+                                </configuration>
+                            </execution>
+
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>do-deploy</id>
+            <activation>
+                <property>
+                    <name>doDeploy</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.xebialabs.xldeploy</groupId>
+                        <artifactId>xldeploy-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploiement</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <serverAddress>${deployit.server}</serverAddress>
+                                    <deletePreviouslyDeployedDar>true</deletePreviouslyDeployedDar>
+                                    <timestampedVersion>true</timestampedVersion>
+                                    <environmentId>Environments/blabla/BACK/${deployit.env}/${deployit.env}_blabla_BACK</environmentId>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
+
+
