@@ -21,7 +21,7 @@
             <th>Tags</th>
             <th>file</th>
           </tr>
-          <xsl:apply-templates select="//deployable"/>
+          <xsl:apply-templates select="/deployables/deployable"/>
         </table>
       </body>
     </html>
@@ -37,17 +37,13 @@
       <td><xsl:value-of select="targetPath"/></td>
 
       <td><xsl:apply-templates select="tags/tag"/></td>
-      <td><xsl:apply-templates select="//dependency"/></td>
+      <td><xsl:apply-templates  select="targetPath"/></td>
+      <td><xsl:apply-templates  select="file"/></td>
     </tr>
   </xsl:template>
 
   <xsl:template match="tag">
     <xsl:value-of select="."/><xsl:text>, </xsl:text>
   </xsl:template>
-  <xsl:template match="dependency">
 
-  <xsl:value-of select="artifactId"/><xsl:text>-</xsl:text><xsl:value-of select="version"/><xsl:text>.</xsl:text><xsl:value-of select="type"/>   
-  
-
-</xsl:template >
 </xsl:stylesheet>
