@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<deployables><deployable><name>blabla-.ear</name><groupId>com.exemple.blabla</groupId><artifactId>blabla-ear</artifactId><type>jee.Ear</type><scanPlaceholders>false</scanPlaceholders><targetPath>{{blabla-.jboss.base}}/deployments</targetPath><tags>
+                                    <tag>blabla</tag>
+                                </tags><file>blabla-ear-${project.version}.ear</file></deployable><deployable><name>blabla-config</name><groupId>com.exemple.blabla</groupId><artifactId>blabla-config</artifactId><type>file.folder</type><scanPlaceholders>true</scanPlaceholders><targetPath>
+                                    {{blabla-.jboss.base}}/{{blabla-.jboss.modules}}/com/exemple/appli/configuration/main</targetPath><tags>
+                                    <tag>blabla</tag>
+                                </tags><file>blabla-config-${project.version}.zip</file></deployable><deployable><name>blabla-sql</name><type>sql.SqlScripts</type><scanPlaceholders>true</scanPlaceholders><tags>
+                                    <tag>blabla-FZ-BDD</tag>
+                                </tags><file>-.</file></deployable></deployables>
